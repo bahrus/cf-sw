@@ -7,31 +7,58 @@ export async function handleRequest(request: Request): Promise<Response> {
   const resp = await fetch(href);
   const json = await resp.json();
   const processed = getTagNameToDeclaration(json);
-  
-  return new Response(html`
-    <html>
+  const embedded = substr_between(request.url, 'embedded=', '&') === 'true';
+  if(embedded){
+    return new Response(html`
+        ${processed!.declarations.map(declaration => html`
+          <h1>${(<any>declaration).tagName}</h1>
+          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties')}
+          ${tablify((<any>declaration).attributes, 'Attributes')}
+          ${tablify((<any>declaration).cssProperties, 'CSS Properties')}
+          ${tablify((<any>declaration).cssParts, 'CSS Parts')}
+          ${tablify((<any>declaration).slots, 'Slots')}
+          ${tablify((<any>declaration).events, 'Events')}
+          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods')}
+      `).join('')}
+    `);
+  }else{
+    return new Response(html`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>WC Info</title>
+      <link rel="preload" href="https://cdn.skypack.dev/wc-info/simple-ce-style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+      <noscript><link rel="stylesheet" href="https://cdn.skypack.dev/wc-info/simple-ce-style.css"></noscript>
+      <link rel="stylesheet" href="">
+    </head>
     <body>
-    <script type=module>
-      import 'https://cdn.skypack.dev/xtal-editor';
-    </script>
-    request method2: ${request.method}
-    href: ${href}
-    <xtal-editor>
-    <textarea slot=initVal>
-    ${JSON.stringify(processed)}
-    </textarea>
-    </xtal-editor>
+
+
     
     ${processed!.declarations.map(declaration => html`
         <h1>${(<any>declaration).tagName}</h1>
+        ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties')}
         ${tablify((<any>declaration).attributes, 'Attributes')}
         ${tablify((<any>declaration).cssProperties, 'CSS Properties')}
         ${tablify((<any>declaration).cssParts, 'CSS Parts')}
         ${tablify((<any>declaration).slots, 'Slots')}
         ${tablify((<any>declaration).events, 'Events')}
-        ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties')}
         ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods')}
     `).join('')}
+    <xtal-editor read-only key=package>
+    <textarea slot=initVal>
+    ${JSON.stringify(processed)}
+    </textarea>
+    </xtal-editor>
+    <script type=module>
+      import 'https://cdn.skypack.dev/xtal-editor';
+    </script>
+    <script type=module>
+      import 'https://cdn.skypack.dev/wc-info/enhancements.js'
+    </script>
     </body>
     </html>
   `, {
@@ -39,20 +66,32 @@ export async function handleRequest(request: Request): Promise<Response> {
       "content-type": "text/html;charset=UTF-8",
     }
   })
+  }
+  
 }
 
 function tablify(obj: any[], name: string){
   if(obj === undefined || obj.length === 0) return '';
-
+  const compactedName = name.replaceAll(' ', '-').toLowerCase();
   const keys = getKeys(obj);
-  const header = keys.map(x => html`<th>${x}</th>`).join('');
-  const rows = obj.map(x => html`<tr>${keys.map(key => html`<td>${x[key]}</td>`).join('')}</tr>`).join('');
+  const header = keys.map(x => html`<th part="${compactedName}-${x}-header" class="${x}">${x}</th>`).join('');
+  const rows = obj.map(x => html`<tr>${keys.map(key => displayCell(key, x, compactedName)).join('')}</tr>`).join('');
   return html`
   <h2>${name}</h2>
-  <table>
+  <table class=${compactedName}>
     ${header}
     ${rows}
   </table>`;
+}
+
+function displayCell(key: string, x: any, compactedName: string){
+  const val = x[key];
+  if(val === undefined) return html`<td part="${compactedName}-${key}-cell" class="${key}"> - </td>`;
+  if(typeof(val) === 'object'){
+    return html`<td part="${compactedName}-${key}-cell" class="${key}" be-val='${JSON.stringify(val)}'></td>`
+  }else{
+    return html`<td part="${compactedName}-${key}-cell" class="${key}">${val}</td>`
+  }
 }
 
 function getKeys(obj: any[]){
@@ -168,8 +207,10 @@ function getMethodsFromDeclaration(ce: CustomElementDeclaration): ClassMethod[]{
 }
 
 function substr_between(str: string, start: string, end: string): string {
+  const start_pos = str.indexOf(start);
+  if(start_pos === -1) return '';
   const iPos = str.indexOf(end);
-  return iPos === -1 ? str.substring(str.indexOf(start) + start.length) :  str.substring(str.indexOf(start) + start.length, iPos);
+  return iPos === -1 ? str.substring(start_pos + start.length) :  str.substring(start_pos + start.length, iPos);
 }
 
 function countTypes(declaration: Declaration){
