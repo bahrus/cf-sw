@@ -22,9 +22,11 @@ export async function handleRequest(request: Request): Promise<Response> {
     </head>
     <body>
       <h1>WC Info Usage</h1>
-      <form>
+      <form style="display:flex;flex-direction:column">
         <label for="href">href</label>
-        <input type="text" id="href" name="href" value="https://cdn.skypack.dev/xtal-editor/custom-elements.json">
+        <input type="text" id="href" size=100 name="href" value="https://cdn.skypack.dev/xtal-editor/custom-elements.json">
+        <label for="stylesheet">stylesheet</label>
+        <input type="text" id="stylesheet" size=100 name="stylesheet" value="https://cdn.skypack.dev/wc-info/simple-ce-style.css">
         <label for="embedded">embedded</label>
         <input type="text" id="embedded" name="embedded" value="false">
         <button type="submit">Submit</button>
@@ -35,6 +37,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   const json = await resp.json();
   const processed = getTagNameToDeclaration(json);
   const embedded = substr_between(url, 'embedded=', '&');
+  const stylesheet = unescape(substr_between(url, 'stylesheet=', '&')) || 'https://cdn.skypack.dev/wc-info/simple-ce-style.css';
   if(embedded === 'true'){
     return new Response(html`
         ${processed!.declarations.map(declaration => html`
@@ -59,8 +62,8 @@ export async function handleRequest(request: Request): Promise<Response> {
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>WC Info</title>
-      <link rel="preload" href="https://cdn.skypack.dev/wc-info/simple-ce-style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-      <noscript><link rel="stylesheet" href="https://cdn.skypack.dev/wc-info/simple-ce-style.css"></noscript>
+      <link rel="preload" href="${stylesheet}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+      <noscript><link rel="stylesheet" href="${stylesheet}"></noscript>
     </head>
     <body>
 
