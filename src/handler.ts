@@ -4,9 +4,33 @@ import { Declaration, CustomElementDeclaration, CustomElement, Package, ClassDec
 export interface EnhancedClassField extends ClassField{
   val: any;
 }
+const headers =  {
+  "content-type": "text/html;charset=UTF-8",
+  'Access-Control-Allow-Origin': '*',
+};
 export async function handleRequest(request: Request): Promise<Response> {
   const url = request.url;
-  const href = substr_between(url, 'href=', '&');
+  const href = unescape(substr_between(url, 'href=', '&'));
+  if(href === '') return new Response(html`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>WC Info Usage</title>
+    </head>
+    <body>
+      <h1>WC Info Usage</h1>
+      <form>
+        <label for="href">href</label>
+        <input type="text" id="href" name="href" value="https://cdn.skypack.dev/xtal-editor/custom-elements.json">
+        <label for="embedded">embedded</label>
+        <input type="text" id="embedded" name="embedded" value="false">
+        <button type="submit">Submit</button>
+      </form>
+    </body>
+  `, {headers});
   const resp = await fetch(href);
   const json = await resp.json();
   const processed = getTagNameToDeclaration(json);
@@ -24,10 +48,7 @@ export async function handleRequest(request: Request): Promise<Response> {
           ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods')}
       `).join('')}
     `, {
-    headers: {
-      "content-type": "text/html;charset=UTF-8",
-      'Access-Control-Allow-Origin': '*',
-    }
+    headers
   });
   }else{
     return new Response(html`
@@ -56,7 +77,7 @@ export async function handleRequest(request: Request): Promise<Response> {
     `).join('')}
     <xtal-editor read-only key=package>
     <textarea slot=initVal>
-    ${JSON.stringify(processed)}
+    ${JSON.stringify(json)}
     </textarea>
     </xtal-editor>
     <script type=module>
@@ -68,10 +89,7 @@ export async function handleRequest(request: Request): Promise<Response> {
     </body>
     </html>
   `, {
-    headers: {
-      "content-type": "text/html;charset=UTF-8",
-      'Access-Control-Allow-Origin': '*',
-    }
+    headers
   })
   }
   
