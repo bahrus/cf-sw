@@ -1,14 +1,17 @@
-import { Declaration, CustomElementDeclaration, CustomElement, Package, ClassDeclaration, ClassField, ClassMethod } from '../../node_modules/custom-elements-manifest/schema.d.js';
-import {EnhancedClassField} from '../../types';
+import { Declaration, CustomElementDeclaration, CustomElement, Package, ClassDeclaration, ClassField, ClassMethod } from '../node_modules/custom-elements-manifest/schema.d.js';
 
 
+export interface EnhancedClassField extends ClassField{
+  val: any;
+}
 export async function handleRequest(request: Request): Promise<Response> {
-  const href = substr_between(request.url, 'href=', '&');
+  const url = request.url;
+  const href = substr_between(url, 'href=', '&');
   const resp = await fetch(href);
   const json = await resp.json();
   const processed = getTagNameToDeclaration(json);
-  const embedded = substr_between(request.url, 'embedded=', '&') === 'true';
-  if(embedded){
+  const embedded = substr_between(url, 'embedded=', '&');
+  if(embedded === 'true'){
     return new Response(html`
         ${processed!.declarations.map(declaration => html`
           <h1>${(<any>declaration).tagName}</h1>
@@ -20,7 +23,12 @@ export async function handleRequest(request: Request): Promise<Response> {
           ${tablify((<any>declaration).events, 'Events')}
           ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods')}
       `).join('')}
-    `);
+    `, {
+    headers: {
+      "content-type": "text/html;charset=UTF-8",
+      'Access-Control-Allow-Origin': '*',
+    }
+  });
   }else{
     return new Response(html`
     <!DOCTYPE html>
@@ -32,10 +40,8 @@ export async function handleRequest(request: Request): Promise<Response> {
       <title>WC Info</title>
       <link rel="preload" href="https://cdn.skypack.dev/wc-info/simple-ce-style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
       <noscript><link rel="stylesheet" href="https://cdn.skypack.dev/wc-info/simple-ce-style.css"></noscript>
-      <link rel="stylesheet" href="">
     </head>
     <body>
-
 
     
     ${processed!.declarations.map(declaration => html`
@@ -64,6 +70,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   `, {
     headers: {
       "content-type": "text/html;charset=UTF-8",
+      'Access-Control-Allow-Origin': '*',
     }
   })
   }
@@ -209,7 +216,7 @@ function getMethodsFromDeclaration(ce: CustomElementDeclaration): ClassMethod[]{
 function substr_between(str: string, start: string, end: string): string {
   const start_pos = str.indexOf(start);
   if(start_pos === -1) return '';
-  const iPos = str.indexOf(end);
+  const iPos = str.indexOf(end, start_pos + start.length);
   return iPos === -1 ? str.substring(start_pos + start.length) :  str.substring(start_pos + start.length, iPos);
 }
 
