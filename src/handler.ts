@@ -98,7 +98,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   
 }
 
-function tablify(obj: any[], name: string){
+function tablify(obj: any[], name: string): string{
   if(obj === undefined || obj.length === 0) return '';
   const compactedName = name.replaceAll(' ', '-').toLowerCase();
   const keys = getKeys(obj);
@@ -107,6 +107,7 @@ function tablify(obj: any[], name: string){
   return html`
   <h2>${name}</h2>
   <table class=${compactedName}>
+    <caption>${name}</caption>
     ${header}
     ${rows}
   </table>`;
@@ -116,7 +117,10 @@ function displayCell(key: string, x: any, compactedName: string){
   const val = x[key];
   if(val === undefined) return html`<td part="${compactedName}-${key}-cell" class="${key}"> - </td>`;
   if(typeof(val) === 'object'){
-    return html`<td part="${compactedName}-${key}-cell" class="${key}" be-val='${JSON.stringify(val)}'></td>`
+    if(Array.isArray(val) && key){
+      return tablify(val, key);
+    }
+    
   }else{
     return html`<td part="${compactedName}-${key}-cell" class="${key}">${val}</td>`
   }
