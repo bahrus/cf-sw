@@ -105,7 +105,6 @@ function tablify(obj: any[], name: string): string{
   const header = keys.map(x => html`<th part="${compactedName}-${x}-header" class="${x}">${x}</th>`).join('');
   const rows = obj.map(x => html`<tr>${keys.map(key => displayCell(key, x, compactedName)).join('')}</tr>`).join('');
   return html`
-  <h2>${name}</h2>
   <table class=${compactedName}>
     <caption>${name}</caption>
     ${header}
@@ -118,7 +117,7 @@ function displayCell(key: string, x: any, compactedName: string){
   if(val === undefined) return html`<td part="${compactedName}-${key}-cell" class="${key}"> - </td>`;
   if(typeof(val) === 'object'){
     if(Array.isArray(val) && key){
-      return tablify(val, key);
+      return html`<td part="${compactedName}-${key}-cell" class="${key}">${tablify(val, key)}</td>`;
     }
     
   }else{
