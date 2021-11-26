@@ -118,6 +118,8 @@ function displayCell(key: string, x: any, compactedName: string){
   if(typeof(val) === 'object'){
     if(Array.isArray(val) && key){
       return html`<td part="${compactedName}-${key}-cell" class="${key}">${tablify(val, key)}</td>`;
+    }else{
+      return html`<td part="${compactedName}-${key}-cell" class="${key}" data-is-json>${JSON.stringify(val)}</td>`;
     }
     
   }else{
