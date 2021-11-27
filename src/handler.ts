@@ -107,8 +107,14 @@ function tablify(obj: any[], name: string): string{
   return html`
   <table class=${compactedName}>
     <caption>${name}</caption>
+    <thead>
+      <tr>
     ${header}
+      </tr>
+    </thead>
+    <tbody>
     ${rows}
+    </tbody>
   </table>`;
 }
 
