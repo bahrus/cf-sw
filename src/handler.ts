@@ -32,6 +32,7 @@ export async function handleRequest(request: Request): Promise<Response> {
         <button type="submit">Submit</button>
       </form>
     </body>
+  </html>
   `, {headers});
   const resp = await fetch(href);
   const json = await resp.json();
