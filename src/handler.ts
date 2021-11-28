@@ -29,7 +29,7 @@ export async function handleRequest(request: Request): Promise<Response> {
       <h1>WC Info Usage</h1>
       <form style="display:flex;flex-direction:column">
         <label for="href">href</label>
-        <input type="text" id="href" size=100 name="href" value="https://cdn.skypack.dev/xtal-editor/custom-elements.json">
+        <input type="text" id="href" size=100 name="href" value="https://cdn.skypack.dev/@shoelace-style/shoelace/dist/custom-elements.json">
         <label for="stylesheet">stylesheet</label>
         <input type="text" id="stylesheet" size=100 name="stylesheet" value="https://cdn.skypack.dev/wc-info/simple-ce-style.css">
         <label for="embedded">embedded</label>
@@ -111,8 +111,8 @@ function tablify(obj: any[], name: string): string{
   const header = keys.map(x => html`<th part="${compactedName}-${x}-header" class="${x}">${x}</th>`).join('');
   const rows = obj.map(x => html`<tr>${keys.map(key => displayCell(key, x, compactedName)).join('')}</tr>`).join('');
   return html`
-  <table class=${compactedName}>
-    <caption>${name}</caption>
+  <table part="table table-${compactedName}" class=${compactedName}>
+    <caption class="title">${name}</caption>
     <thead>
       <tr>
     ${header}
