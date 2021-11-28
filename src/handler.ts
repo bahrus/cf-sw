@@ -124,6 +124,12 @@ function tablify(obj: any[], name: string): string{
   </table>`;
 }
 
+function sanitize(str: string): string{
+  if(!str) return '';
+  if(typeof str !== 'string') return str;
+  return str.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+}
+
 function displayCell(key: string, x: any, compactedName: string){
   const val = x[key];
   if(val === undefined) return html`<td part="${compactedName}-${key}-cell" class="${key}"> - </td>`;
@@ -135,7 +141,7 @@ function displayCell(key: string, x: any, compactedName: string){
     }
     
   }else{
-    return html`<td part="${compactedName}-${key}-cell" class="${key}">${val}</td>`
+    return html`<td part="${compactedName}-${key}-cell" class="${key}">${sanitize(val)}</td>`
   }
 }
 
