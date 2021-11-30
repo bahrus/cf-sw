@@ -84,13 +84,13 @@ export async function handleRequest(request: Request): Promise<Response> {
     
     ${declarations.map(declaration => html`
         <h1>${(<any>declaration).tagName}</h1>
-        ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField')}
+        ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField', ['kind'])}
         ${tablify((<any>declaration).attributes, 'Attributes', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Attribute')}
         ${tablify((<any>declaration).cssProperties, 'CSS Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/CssCustomProperty')}
         ${tablify((<any>declaration).cssParts, 'CSS Parts', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/CssPart')}
         ${tablify((<any>declaration).slots, 'Slots', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Slot')}
         ${tablify((<any>declaration).events, 'Events', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Event')}
-        ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Method')}
+        ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Method', ['kind'])}
     `).join('')}
     <xtal-editor read-only key=package>
     <textarea slot=initVal>
@@ -114,10 +114,10 @@ export async function handleRequest(request: Request): Promise<Response> {
 
 
 
-function tablify(obj: any[], name: string, itemType: string): string{
+function tablify(obj: any[], name: string, itemType: string, exclude: string[] = []): string{
   if(obj === undefined || obj.length === 0) return '';
   const compactedName = name.replaceAll(' ', '-').toLowerCase();
-  const keys = getKeys(obj);
+  const keys = getKeys(obj).filter(x => !exclude.includes(x));
   const header = keys.map(x => html`<th part="${compactedName}-${x}-header" class="${x}">${x}</th>`).join('');
   const rows = obj.map(x => html`<tr itemscope itemtype="${itemType}">${keys.map(key => displayCell(key, x, compactedName)).join('')}</tr>`).join('');
   return html`
