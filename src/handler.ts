@@ -75,7 +75,7 @@ export async function handleRequest(request: Request): Promise<Response> {
 
     
     ${processed!.declarations.map(declaration => html`
-        <h1 data-meta-keys="tagName">${(<any>declaration).tagName}</h1>
+        <h1>${(<any>declaration).tagName}</h1>
         ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties')}
         ${tablify((<any>declaration).attributes, 'Attributes')}
         ${tablify((<any>declaration).cssProperties, 'CSS Properties')}
@@ -104,40 +104,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   
 }
 
-function buildMeta(obj: any, name: string){
-  return html`<template itemprop="${name}">
-    ${buildMetaProperties(obj)}
-  </template>`;
-}
 
-function buildMetaProperties(obj: any): string{
-  const arr: string[] = [];
-  if(Array.isArray(obj)){
-    for(const val of obj){
-      switch(typeof val){
-        case 'string':
-          arr.push(html`<meta name="${val}">`);
-          break;
-        case 'object':
-          console.error('NI');
-          break;
-      }
-    };
-  }else{
-    for(const key in obj){
-      const val = obj[key];
-      switch(typeof val){
-        case 'string':
-          arr.push(html`<meta name="${key}" content="${val}">`);
-          break;
-        case 'object':
-          arr.push(buildMeta(val, key));
-          break;
-      }
-    }
-  }
-  return arr.join('');
-}
 
 function tablify(obj: any[], name: string): string{
   if(obj === undefined || obj.length === 0) return '';
@@ -145,9 +112,8 @@ function tablify(obj: any[], name: string): string{
   const keys = getKeys(obj);
   const header = keys.map(x => html`<th part="${compactedName}-${x}-header" class="${x}">${x}</th>`).join('');
   const rows = obj.map(x => html`<tr>${keys.map(key => displayCell(key, x, compactedName)).join('')}</tr>`).join('');
-  const meta = {name};
   return html`
-  <table data-meta-keys='${JSON.stringify(meta)}' part="table table-${compactedName}" class=${compactedName}>
+  <table part="table table-${compactedName}" class=${compactedName}>
     <caption class="title">${name}</caption>
     <thead >
       <tr>
@@ -155,7 +121,6 @@ function tablify(obj: any[], name: string): string{
       </tr>
     </thead>
     <tbody>
-      ${buildMeta(keys, compactedName)}
       ${rows}
     </tbody>
   </table>`;
