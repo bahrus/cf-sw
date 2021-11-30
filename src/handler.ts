@@ -35,6 +35,8 @@ export async function handleRequest(request: Request): Promise<Response> {
         <input type="text" id="stylesheet" size=100 name="stylesheet" value="https://unpkg.com/wc-info/simple-ce-style.css">
         <label for="embedded">embedded</label>
         <input type="text" id="embedded" name="embedded" value="false">
+        <label for="tags">tags</label>
+        <input type="text" id="tags" name="tags">
         <button type="submit">Submit</button>
       </form>
     </body>
@@ -43,11 +45,16 @@ export async function handleRequest(request: Request): Promise<Response> {
   const resp = await fetch(href);
   const json = await resp.json();
   const processed = getTagNameToDeclaration(json);
+  let declarations = processed!.declarations;
+  const tags = substr_between(url, 'tags=', '&');
+  if(tags){
+    declarations = declarations.filter(d => tags.includes((<any>d).tagName));
+  }
   const embedded = substr_between(url, 'embedded=', '&');
   const stylesheet = unescape(substr_between(url, 'stylesheet=', '&')) || 'https://unpkg.com/wc-info/simple-ce-style.css';
   if(embedded === 'true'){
     return new Response(html`
-        ${processed!.declarations.map(declaration => html`
+        ${declarations.map(declaration => html`
           <h1>${(<any>declaration).tagName}</h1>
           ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField')}
           ${tablify((<any>declaration).attributes, 'Attributes', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Attribute')}
@@ -75,7 +82,7 @@ export async function handleRequest(request: Request): Promise<Response> {
     <body>
 
     
-    ${processed!.declarations.map(declaration => html`
+    ${declarations.map(declaration => html`
         <h1>${(<any>declaration).tagName}</h1>
         ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField')}
         ${tablify((<any>declaration).attributes, 'Attributes', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Attribute')}
@@ -135,16 +142,16 @@ function sanitize(str: string): string{
 
 function displayCell(key: string, x: any, compactedName: string){
   const val = x[key];
-  if(val === undefined) return html`<td part="${compactedName}-${key}-cell" class="${key}"> - </td>`;
+  if(val === undefined) return html`<td part="cell ${compactedName}-${key}-cell" class="${key}"> - </td>`;
   if(typeof(val) === 'object'){
     if(Array.isArray(val) && key){
-      return html`<td part="${compactedName}-${key}-cell" class="${key}">${tablify(val, key, 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}</td>`;
+      return html`<td itemprop="${key}" part="cell ${compactedName}-${key}-cell" class="${key}">${tablify(val, key, 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}</td>`;
     }else{
-      return html`<td part="${compactedName}-${key}-cell" class="${key}" data-is-json>${JSON.stringify(val)}</td>`;
+      return html`<td itemprop="${key}"  part="cell ${compactedName}-${key}-cell" class="${key}" data-is-json>${JSON.stringify(val)}</td>`;
     }
     
   }else{
-    return html`<td part="${compactedName}-${key}-cell" class="${key}">${sanitize(val)}</td>`
+    return html`<td itemprop="${key}"  part="cell ${compactedName}-${key}-cell" class="${key}">${sanitize(val)}</td>`
   }
 }
 
