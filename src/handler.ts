@@ -48,13 +48,13 @@ export async function handleRequest(request: Request): Promise<Response> {
     return new Response(html`
         ${processed!.declarations.map(declaration => html`
           <h1>${(<any>declaration).tagName}</h1>
-          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties')}
-          ${tablify((<any>declaration).attributes, 'Attributes')}
-          ${tablify((<any>declaration).cssProperties, 'CSS Properties')}
-          ${tablify((<any>declaration).cssParts, 'CSS Parts')}
-          ${tablify((<any>declaration).slots, 'Slots')}
-          ${tablify((<any>declaration).events, 'Events')}
-          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods')}
+          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
+          ${tablify((<any>declaration).attributes, 'Attributes', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
+          ${tablify((<any>declaration).cssProperties, 'CSS Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
+          ${tablify((<any>declaration).cssParts, 'CSS Parts', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
+          ${tablify((<any>declaration).slots, 'Slots', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
+          ${tablify((<any>declaration).events, 'Events', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
+          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
       `).join('')}
     `, {
     headers
@@ -76,13 +76,13 @@ export async function handleRequest(request: Request): Promise<Response> {
     
     ${processed!.declarations.map(declaration => html`
         <h1>${(<any>declaration).tagName}</h1>
-        ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties')}
-        ${tablify((<any>declaration).attributes, 'Attributes')}
-        ${tablify((<any>declaration).cssProperties, 'CSS Properties')}
-        ${tablify((<any>declaration).cssParts, 'CSS Parts')}
-        ${tablify((<any>declaration).slots, 'Slots')}
-        ${tablify((<any>declaration).events, 'Events')}
-        ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods')}
+        ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
+        ${tablify((<any>declaration).attributes, 'Attributes', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
+        ${tablify((<any>declaration).cssProperties, 'CSS Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
+        ${tablify((<any>declaration).cssParts, 'CSS Parts', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
+        ${tablify((<any>declaration).slots, 'Slots', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
+        ${tablify((<any>declaration).events, 'Events', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
+        ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}
     `).join('')}
     <xtal-editor read-only key=package>
     <textarea slot=initVal>
@@ -106,14 +106,14 @@ export async function handleRequest(request: Request): Promise<Response> {
 
 
 
-function tablify(obj: any[], name: string): string{
+function tablify(obj: any[], name: string, itemType: string): string{
   if(obj === undefined || obj.length === 0) return '';
   const compactedName = name.replaceAll(' ', '-').toLowerCase();
   const keys = getKeys(obj);
   const header = keys.map(x => html`<th part="${compactedName}-${x}-header" class="${x}">${x}</th>`).join('');
-  const rows = obj.map(x => html`<tr>${keys.map(key => displayCell(key, x, compactedName)).join('')}</tr>`).join('');
+  const rows = obj.map(x => html`<tr itemscope itemtype="${itemType}">${keys.map(key => displayCell(key, x, compactedName)).join('')}</tr>`).join('');
   return html`
-  <table part="table table-${compactedName}" class=${compactedName}>
+  <table  part="table table-${compactedName}" class=${compactedName}>
     <caption class="title">${name}</caption>
     <thead >
       <tr>
@@ -137,7 +137,7 @@ function displayCell(key: string, x: any, compactedName: string){
   if(val === undefined) return html`<td part="${compactedName}-${key}-cell" class="${key}"> - </td>`;
   if(typeof(val) === 'object'){
     if(Array.isArray(val) && key){
-      return html`<td part="${compactedName}-${key}-cell" class="${key}">${tablify(val, key)}</td>`;
+      return html`<td part="${compactedName}-${key}-cell" class="${key}">${tablify(val, key, 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}</td>`;
     }else{
       return html`<td part="${compactedName}-${key}-cell" class="${key}" data-is-json>${JSON.stringify(val)}</td>`;
     }
