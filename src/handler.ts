@@ -48,7 +48,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   let declarations = processed!.declarations;
   const tags = substr_between(url, 'tags=', '&');
   if(tags){
-    declarations = declarations.filter(d => tags.includes((<any>d).tagName));
+    declarations = declarations.filter(d => tags.split(',').includes((<any>d).tagName));
   }
   const embedded = substr_between(url, 'embedded=', '&');
   const stylesheet = unescape(substr_between(url, 'stylesheet=', '&')) || 'https://unpkg.com/wc-info/simple-ce-style.css';
