@@ -75,7 +75,7 @@ export async function handleRequest(request: Request): Promise<Response> {
 
     
     ${processed!.declarations.map(declaration => html`
-        <h1>${(<any>declaration).tagName}</h1>
+        <h1 data-meta-keys="tagName">${(<any>declaration).tagName}</h1>
         ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties')}
         ${tablify((<any>declaration).attributes, 'Attributes')}
         ${tablify((<any>declaration).cssProperties, 'CSS Properties')}
@@ -104,21 +104,23 @@ export async function handleRequest(request: Request): Promise<Response> {
   
 }
 
+
 function tablify(obj: any[], name: string): string{
   if(obj === undefined || obj.length === 0) return '';
   const compactedName = name.replaceAll(' ', '-').toLowerCase();
   const keys = getKeys(obj);
   const header = keys.map(x => html`<th part="${compactedName}-${x}-header" class="${x}">${x}</th>`).join('');
   const rows = obj.map(x => html`<tr>${keys.map(key => displayCell(key, x, compactedName)).join('')}</tr>`).join('');
+  const meta = {name};
   return html`
-  <table part="table table-${compactedName}" class=${compactedName}>
+  <table data-meta-keys='${JSON.stringify(meta)}' part="table table-${compactedName}" class=${compactedName}>
     <caption class="title">${name}</caption>
-    <thead>
+    <thead >
       <tr>
     ${header}
       </tr>
     </thead>
-    <tbody>
+    <tbody data-meta-keys='${JSON.stringify(keys)}'>
     ${rows}
     </tbody>
   </table>`;
