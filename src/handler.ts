@@ -104,6 +104,40 @@ export async function handleRequest(request: Request): Promise<Response> {
   
 }
 
+function buildMeta(obj: any, name: string){
+  return html`<template itemprop="${name}">
+    ${buildMetaProperties(obj)}
+  </template>`;
+}
+
+function buildMetaProperties(obj: any): string{
+  const arr: string[] = [];
+  if(Array.isArray(obj)){
+    for(const val of obj){
+      switch(typeof val){
+        case 'string':
+          arr.push(html`<meta name="${val}">`);
+          break;
+        case 'object':
+          console.error('NI');
+          break;
+      }
+    };
+  }else{
+    for(const key in obj){
+      const val = obj[key];
+      switch(typeof val){
+        case 'string':
+          arr.push(html`<meta name="${key}" content="${val}">`);
+          break;
+        case 'object':
+          arr.push(buildMeta(val, key));
+          break;
+      }
+    }
+  }
+  return arr.join('');
+}
 
 function tablify(obj: any[], name: string): string{
   if(obj === undefined || obj.length === 0) return '';
@@ -120,8 +154,9 @@ function tablify(obj: any[], name: string): string{
     ${header}
       </tr>
     </thead>
-    <tbody data-meta-keys='${JSON.stringify(keys)}'>
-    ${rows}
+    <tbody>
+      ${buildMeta(keys, compactedName)}
+      ${rows}
     </tbody>
   </table>`;
 }
