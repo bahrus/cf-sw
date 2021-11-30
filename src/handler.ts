@@ -8,6 +8,7 @@ const headers =  {
   "content-type": "text/html;charset=UTF-8",
   'Access-Control-Allow-Origin': '*',
 };
+
 export async function handleRequest(request: Request): Promise<Response> {
   const url = request.url;
   const href = unescape(substr_between(url, 'href=', '&'));
@@ -31,7 +32,7 @@ export async function handleRequest(request: Request): Promise<Response> {
         <label for="href">href</label>
         <input type="text" id="href" size=100 name="href" value="https://cdn.skypack.dev/@shoelace-style/shoelace/dist/custom-elements.json">
         <label for="stylesheet">stylesheet</label>
-        <input type="text" id="stylesheet" size=100 name="stylesheet" value="https://cdn.skypack.dev/wc-info/simple-ce-style.css">
+        <input type="text" id="stylesheet" size=100 name="stylesheet" value="https://unpkg.com/wc-info/simple-ce-style.css">
         <label for="embedded">embedded</label>
         <input type="text" id="embedded" name="embedded" value="false">
         <button type="submit">Submit</button>
@@ -43,7 +44,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   const json = await resp.json();
   const processed = getTagNameToDeclaration(json);
   const embedded = substr_between(url, 'embedded=', '&');
-  const stylesheet = unescape(substr_between(url, 'stylesheet=', '&')) || 'https://cdn.skypack.dev/wc-info/simple-ce-style.css';
+  const stylesheet = unescape(substr_between(url, 'stylesheet=', '&')) || 'https://unpkg.com/wc-info/simple-ce-style.css';
   if(embedded === 'true'){
     return new Response(html`
         ${processed!.declarations.map(declaration => html`
