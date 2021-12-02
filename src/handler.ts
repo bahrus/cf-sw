@@ -56,13 +56,13 @@ export async function handleRequest(request: Request): Promise<Response> {
     return new Response(html`
         ${declarations.map(declaration => html`
           <h1>${(<any>declaration).tagName}</h1>
-          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField')}
+          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField', ['kind'])}
           ${tablify((<any>declaration).attributes, 'Attributes', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Attribute')}
           ${tablify((<any>declaration).cssProperties, 'CSS Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/CssCustomProperty')}
           ${tablify((<any>declaration).cssParts, 'CSS Parts', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/CssPart')}
           ${tablify((<any>declaration).slots, 'Slots', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Slot')}
           ${tablify((<any>declaration).events, 'Events', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Event')}
-          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Method')}
+          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Method', ['kind'])}
       `).join('')}
     `, {
     headers
@@ -142,16 +142,17 @@ function sanitize(str: string): string{
 
 function displayCell(key: string, x: any, compactedName: string){
   const val = x[key];
+  const attrs =  `itemprop="${key}" part="cell ${compactedName}-${key}-cell" class="${key}"`;
   if(val === undefined) return html`<td part="cell ${compactedName}-${key}-cell" class="${key}"> - </td>`;
   if(typeof(val) === 'object'){
     if(Array.isArray(val) && key){
-      return html`<td itemprop="${key}" part="cell ${compactedName}-${key}-cell" class="${key}">${tablify(val, key, 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}</td>`;
+      return html`<td ${attrs}>${tablify(val, key, 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}</td>`;
     }else{
-      return html`<td itemprop="${key}"  part="cell ${compactedName}-${key}-cell" class="${key}" data-is-json>${JSON.stringify(val)}</td>`;
+      return html`<td ${attrs} data-is-json>${JSON.stringify(val)}</td>`;
     }
     
   }else{
-    return html`<td itemprop="${key}"  part="cell ${compactedName}-${key}-cell" class="${key}">${sanitize(val)}</td>`
+    return html`<td ${attrs}>${sanitize(val)}</td>`
   }
 }
 
