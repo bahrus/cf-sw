@@ -74,7 +74,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   if(embedded === 'true'){
     return new Response(html`
         ${declarations.map(declaration => html`
-          <h1>${(<any>declaration).tagName}</h1>
+          <h1 id="${(<any>declaration).tagName}">${(<any>declaration).tagName}</h1>
           ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField', ['kind'])}
           ${tablify((<any>declaration).attributes, 'Attributes', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Attribute')}
           ${tablify((<any>declaration).cssProperties, 'CSS Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/CssCustomProperty')}
@@ -100,10 +100,19 @@ export async function handleRequest(request: Request): Promise<Response> {
       <noscript><link rel="stylesheet" href="${stylesheet}"></noscript>
     </head>
     <body>
-
-    
+    <header>
+      <xtal-side-nav>
+          <h3>Test</h3>
+      </xtal-side-nav>
+    </header>
+    <main>
     ${declarations.map(declaration => html`
-        <h1>${(<any>declaration).tagName}</h1>
+      <section itemscope id="${(<any>declaration).tagName}">
+        <hgroup>
+          <h1 itemprop="tagName" >${(<any>declaration).tagName}</h1>
+          <h2 itemprop="description">${declaration.description || ''}</h2>
+          <h3 itemprop="summary">${declaration.summary || ''}</h3>
+        </hgroup>
         ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField', ['kind'])}
         ${tablify((<any>declaration).attributes, 'Attributes', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Attribute')}
         ${tablify((<any>declaration).cssProperties, 'CSS Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/CssCustomProperty')}
@@ -111,17 +120,20 @@ export async function handleRequest(request: Request): Promise<Response> {
         ${tablify((<any>declaration).slots, 'Slots', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Slot')}
         ${tablify((<any>declaration).events, 'Events', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Event')}
         ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Method', ['kind'])}
+      </section>
     `).join('')}
     <xtal-editor read-only key=package>
     <textarea slot=initVal>
     ${JSON.stringify(json)}
     </textarea>
     </xtal-editor>
+    </main>
     <script type=module>
       import 'https://cdn.skypack.dev/xtal-editor';
     </script>
     <script type=module>
-      import 'https://cdn.skypack.dev/wc-info/enhancements.js'
+      import 'https://cdn.skypack.dev/wc-info/enhancements.js';
+      import 'https://cdn.skypack.dev/xtal-side-nav';
     </script>
     </body>
     </html>
@@ -168,7 +180,7 @@ function displayCell(key: string, x: any, compactedName: string){
     if(Array.isArray(val) && key){
       return html`<td ${attrs}>${tablify(val, key, 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}</td>`;
     }else{
-      return html`<td ${attrs} data-is-json>${JSON.stringify(val)}</td>`;
+      return html`<td ${attrs} data-is-json><span title='${JSON.stringify(val)}'>⚙️</span></td>`;
     }
     
   }else{
