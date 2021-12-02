@@ -11,6 +11,7 @@ const headers =  {
 };
 
 export async function handleRequest(request: Request): Promise<Response> {
+  console.log('begin handle request');
   const url = request.url;
   const href = unescape(substrBetween(url, 'href=', '&'));
   const ts = unescape(substrBetween(url, 'ts=', '&'));
@@ -42,6 +43,8 @@ export async function handleRequest(request: Request): Promise<Response> {
         <input type="text" id="tags" name="tags">
         <label for="ts">Timestamp</label>
         <input type="text" id="ts" name="ts" value="${new Date().toISOString()}">
+        <label for="tocXSLT">tocXSLT</label>
+        <input type="text" id="tocXSLT" name="tocXSLT" value="https://unpkg.com/wc-info/toc.xsl">
         <button type="submit">Submit</button>
       </form>
     </body>
@@ -59,10 +62,12 @@ export async function handleRequest(request: Request): Promise<Response> {
     console.log('fetching', href);
     const resp = await fetch(href);
     const text = await resp.text();
-    await MY_KV.put(ts, text);
+    if(ts){
+      await MY_KV.put(ts, text);
+    }
+    
     json = JSON.parse(text);
   }
-
   const processed = getTagNameToDeclaration(json);
   let declarations = processed!.declarations;
   const tags = substrBetween(url, 'tags=', '&');
@@ -87,6 +92,8 @@ export async function handleRequest(request: Request): Promise<Response> {
     headers
   });
   }else{
+    const tocXSLT = unescape(substrBetween(url, 'tocXSLT=', '&')) || 'https://unpkg.com/wc-info/toc.xsl';
+
     return new Response(html`
     <!DOCTYPE html>
     <html lang="en">
@@ -102,10 +109,14 @@ export async function handleRequest(request: Request): Promise<Response> {
     <body>
     <header>
       <xtal-side-nav>
-          <h3>Test</h3>
+          
       </xtal-side-nav>
     </header>
-    <main>
+    <main be-metamorphic='{
+      "${tocXSLT}": {
+        "target": "xtal-side-nav"
+      }
+    }'>
     ${declarations.map(declaration => html`
       <section itemscope id="${(<any>declaration).tagName}">
         <hgroup>
@@ -132,8 +143,8 @@ export async function handleRequest(request: Request): Promise<Response> {
       import 'https://cdn.skypack.dev/xtal-editor';
     </script>
     <script type=module>
-      import 'https://cdn.skypack.dev/wc-info/enhancements.js';
       import 'https://cdn.skypack.dev/xtal-side-nav';
+      import 'https://cdn.skypack.dev/be-metamorphic';
     </script>
     </body>
     </html>
