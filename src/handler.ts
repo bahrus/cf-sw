@@ -1,5 +1,5 @@
 import { Declaration, CustomElementDeclaration, CustomElement, Package, ClassDeclaration, ClassField, ClassMethod } from '../node_modules/custom-elements-manifest/schema.d.js';
-
+import { substrBetween } from './substrBetween';
 
 export interface EnhancedClassField extends ClassField{
   val: any;
@@ -11,7 +11,8 @@ const headers =  {
 
 export async function handleRequest(request: Request): Promise<Response> {
   const url = request.url;
-  const href = unescape(substr_between(url, 'href=', '&'));
+  const href = unescape(substrBetween(url, 'href=', '&'));
+
   if(href === '') return new Response(html`
     <!DOCTYPE html>
     <html lang="en">
@@ -37,6 +38,8 @@ export async function handleRequest(request: Request): Promise<Response> {
         <input type="text" id="embedded" name="embedded" value="false">
         <label for="tags">tags</label>
         <input type="text" id="tags" name="tags">
+        <label for="ts">Timestamp</label>
+        <input type="text" id="ts" name="ts" value="${new Date().toISOString()}">
         <button type="submit">Submit</button>
       </form>
     </body>
@@ -46,12 +49,12 @@ export async function handleRequest(request: Request): Promise<Response> {
   const json = await resp.json();
   const processed = getTagNameToDeclaration(json);
   let declarations = processed!.declarations;
-  const tags = substr_between(url, 'tags=', '&');
+  const tags = substrBetween(url, 'tags=', '&');
   if(tags){
     declarations = declarations.filter(d => tags.split(',').includes((<any>d).tagName));
   }
-  const embedded = substr_between(url, 'embedded=', '&');
-  const stylesheet = unescape(substr_between(url, 'stylesheet=', '&')) || 'https://unpkg.com/wc-info/simple-ce-style.css';
+  const embedded = substrBetween(url, 'embedded=', '&');
+  const stylesheet = unescape(substrBetween(url, 'stylesheet=', '&')) || 'https://unpkg.com/wc-info/simple-ce-style.css';
   if(embedded === 'true'){
     return new Response(html`
         ${declarations.map(declaration => html`
@@ -268,12 +271,7 @@ function getMethodsFromDeclaration(ce: CustomElementDeclaration): ClassMethod[]{
   return ce.members.filter(x => x.kind === 'method') as ClassMethod[];
 }
 
-function substr_between(str: string, start: string, end: string): string {
-  const start_pos = str.indexOf(start);
-  if(start_pos === -1) return '';
-  const iPos = str.indexOf(end, start_pos + start.length);
-  return iPos === -1 ? str.substring(start_pos + start.length) :  str.substring(start_pos + start.length, iPos);
-}
+
 
 function countTypes(declaration: Declaration){
   let count = 0;
