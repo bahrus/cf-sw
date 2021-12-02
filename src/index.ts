@@ -7,25 +7,19 @@ async function preHandleRequest(event: FetchEvent): Promise<Response>{
   const ts = substrBetween(url, 'ts=', '&');
   let cacheKey: Request | undefined;
   const cache = caches.default;
-  console.log('start');
   if(ts){
-    console.log('cacheable');
     const cacheURL = new URL(url);
     cacheKey = new Request(cacheURL.toString(), request);
-    
     const cachedResponse = await cache.match(cacheKey);
     if(cachedResponse){
-      console.log('return cached response');
       return cachedResponse;
     }
   }
-  console.log('handleRequest');
   const response = await handleRequest(request);
   if(cacheKey !== undefined){
-    console.log('cache response');
+    response.headers.append("Cache-Control", "s-maxage=10000000")
     event.waitUntil(cache.put(cacheKey, response.clone()));
   }
-  console.log('return response');
   //event.respondWith(response);
   return response;
 };
