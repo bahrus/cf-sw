@@ -1,5 +1,6 @@
 import { Declaration, CustomElementDeclaration, CustomElement, Package, ClassDeclaration, ClassField, ClassMethod } from '../node_modules/custom-elements-manifest/schema.d.js';
 import { substrBetween } from './substrBetween';
+declare const MY_KV: any;
 
 export interface EnhancedClassField extends ClassField{
   val: any;
@@ -12,7 +13,7 @@ const headers =  {
 export async function handleRequest(request: Request): Promise<Response> {
   const url = request.url;
   const href = unescape(substrBetween(url, 'href=', '&'));
-
+  const ts = unescape(substrBetween(url, 'ts=', '&'));
   if(href === '') return new Response(html`
     <!DOCTYPE html>
     <html lang="en">
@@ -46,8 +47,22 @@ export async function handleRequest(request: Request): Promise<Response> {
     </body>
   </html>
   `, {headers});
-  const resp = await fetch(href);
-  const json = await resp.json();
+  let json: any;
+  if(ts){
+    const text = await MY_KV.get(ts);
+    if(text){
+      console.log('parsing from cache');
+      json = JSON.parse(text);
+    }
+  }
+  if(!json){
+    console.log('fetching', href);
+    const resp = await fetch(href);
+    const text = await resp.text();
+    await MY_KV.put(ts, text);
+    json = JSON.parse(text);
+  }
+
   const processed = getTagNameToDeclaration(json);
   let declarations = processed!.declarations;
   const tags = substrBetween(url, 'tags=', '&');
