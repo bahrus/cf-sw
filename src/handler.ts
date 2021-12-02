@@ -114,7 +114,9 @@ export async function handleRequest(request: Request): Promise<Response> {
     </header>
     <main be-metamorphic='{
       "${tocXSLT}": {
-        "target": "xtal-side-nav"
+        "target": "xtal-side-nav",
+        "whenDefined": [],
+        "mode": "append"
       }
     }'>
     ${declarations.map(declaration => html`
@@ -191,7 +193,7 @@ function displayCell(key: string, x: any, compactedName: string){
     if(Array.isArray(val) && key){
       return html`<td ${attrs}>${tablify(val, key, 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}</td>`;
     }else{
-      return html`<td ${attrs} data-is-json><span title='${JSON.stringify(val)}'>⚙️</span></td>`;
+      return html`<td ${attrs} data-is-json><span>⚙️</span></td>`;
     }
     
   }else{
