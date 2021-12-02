@@ -143,7 +143,7 @@ function sanitize(str: string): string{
 function displayCell(key: string, x: any, compactedName: string){
   const val = x[key];
   const attrs =  `itemprop="${key}" part="cell ${compactedName}-${key}-cell" class="${key}"`;
-  if(val === undefined) return html`<td part="cell ${compactedName}-${key}-cell" class="${key}"> - </td>`;
+  if(val === undefined) return html`<td ${attrs}> - </td>`;
   if(typeof(val) === 'object'){
     if(Array.isArray(val) && key){
       return html`<td ${attrs}>${tablify(val, key, 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json')}</td>`;
