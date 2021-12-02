@@ -7,7 +7,6 @@ cf-sw is a cloudflare service worker that provides a library neutral view of cus
 ## TODO's
 
 1.  Streaming
-2.  Caching
 
 
 
