@@ -11,7 +11,7 @@ const headers =  {
 };
 
 export async function handleRequest(request: Request): Promise<Response> {
-  const mobile = request.headers.get('Sec-ch-ua-mobile') !== '?0';
+  const mobile = request.headers.get('Sec-ch-ua-mobile') === '?1';
   console.log('mobile = ' + mobile);
   const url = request.url;
   const href = unescape(substrBetween(url, 'href=', '&'));
