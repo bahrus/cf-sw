@@ -1,4 +1,4 @@
-import { Declaration, CustomElementDeclaration, CustomElement, Package, ClassDeclaration, ClassField, ClassMethod } from '../node_modules/custom-elements-manifest/schema.d.js';
+import { Declaration, CustomElementDeclaration, CustomElement, Package, ClassDeclaration, ClassField, ClassMethod, Module } from '../node_modules/custom-elements-manifest/schema.d.js';
 import { substrBetween } from './substrBetween';
 declare const MY_KV: any;
 
@@ -51,7 +51,7 @@ export async function handleRequest(request: Request): Promise<Response> {
     </body>
   </html>
   `, {headers});
-  let json: any;
+  let json: {package: Package, modules: Module[]} | undefined;
   if(ts){
     const text = await MY_KV.get(ts);
     if(text){
@@ -108,10 +108,9 @@ export async function handleRequest(request: Request): Promise<Response> {
       <noscript><link rel="stylesheet" href="${stylesheet}"></noscript>
     </head>
     <body>
-    <header>
-      <xtal-side-nav>
-          
-      </xtal-side-nav>
+    <header itemscope itemtype="https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Reference">
+      <xtal-side-nav></xtal-side-nav>
+      <h1 itemprop="name" class="package" part="package-title">${(<any>json?.package)?.name}</h1>
     </header>
     <main be-metamorphic='{
       "${tocXSLT}": {
