@@ -70,7 +70,8 @@ export async function handleRequest(request: Request): Promise<Response> {
     json = JSON.parse(text);
   }
   const processed = getTagNameToDeclaration(json);
-  let declarations = processed!.declarations;
+  let declarations = processed?.declarations || [];
+
   const tags = substrBetween(url, 'tags=', '&');
   if(tags){
     declarations = declarations.filter(d => tags.split(',').includes((<any>d).tagName));
@@ -94,7 +95,7 @@ export async function handleRequest(request: Request): Promise<Response> {
   });
   }else{
     const tocXSLT = unescape(substrBetween(url, 'tocXSLT=', '&')) || 'https://unpkg.com/wc-info/toc.xsl';
-
+    console.log('generating response');
     return new Response(html`
     <!DOCTYPE html>
     <html lang="en">
@@ -108,7 +109,7 @@ export async function handleRequest(request: Request): Promise<Response> {
       <noscript><link rel="stylesheet" href="${stylesheet}"></noscript>
     </head>
     <body>
-    <header itemscope itemtype="https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Reference">
+    <header class="package-header" part="package-header" itemscope itemtype="https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Reference">
       <xtal-side-nav></xtal-side-nav>
       <h1 itemprop="name" class="package" part="package-title">${(<any>json?.package)?.name}</h1>
     </header>
@@ -126,13 +127,13 @@ export async function handleRequest(request: Request): Promise<Response> {
           <h2 itemprop="description">${declaration.description || ''}</h2>
           <h3 itemprop="summary">${declaration.summary || ''}</h3>
         </hgroup>
-        ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField', mobile, ['kind'])}
+        ${!(<any>declaration)?.members ? ''  : tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField', mobile, ['kind'])}
         ${tablify((<any>declaration).attributes, 'Attributes', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Attribute', mobile)}
         ${tablify((<any>declaration).cssProperties, 'CSS Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/CssCustomProperty', false)}
         ${tablify((<any>declaration).cssParts, 'CSS Parts', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/CssPart', false)}
         ${tablify((<any>declaration).slots, 'Slots', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Slot', false)}
         ${tablify((<any>declaration).events, 'Events', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Event', false)}
-        ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Method', mobile ,['kind'])}
+        ${!(<any>declaration)?.members ? ''  : tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Method', mobile ,['kind'])}
       </section>
     `).join('')}
     <xtal-editor read-only key=package>
@@ -160,6 +161,7 @@ export async function handleRequest(request: Request): Promise<Response> {
 
 
 function tablify(obj: any[], name: string, itemType: string, separateLineForDescription: boolean, exclude: string[] = []): string{
+  console.log('tablifying ' + name);
   if(obj === undefined || obj.length === 0) return '';
   const compactedName = name.replaceAll(' ', '-').toLowerCase();
   const keys = getKeys(obj).filter(x => !exclude.includes(x));
@@ -254,8 +256,8 @@ function getTagNameToDeclaration(fetchResult: any){
   const pack = fetchResult as Package;
   if(pack === undefined) return;
   const mods = pack.modules;
-  if(mods === undefined) tagNameToDeclaration;
-  
+  if(mods === undefined) return;
+  console.log(typeof mods);
   for(const mod of mods){
       const declarations = mod.declarations;
       if(declarations === undefined) continue;
