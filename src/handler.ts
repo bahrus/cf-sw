@@ -202,12 +202,19 @@ function sanitize(str: string): string{
 function displayCell(key: string, x: any, compactedName: string, colspan = ''){
   const val = x[key];
   const attrs =  `${colspan} itemprop="${key}" part="cell ${compactedName}-${key}-cell" class="${key}"`;
+  const descriptionTitle = (key === 'description' && colspan !== '') ? '<strong>Description: </strong>' : '';
+
   if(val === undefined) return html`<td ${attrs}> - </td>`;
   if(typeof(val) === 'object'){
     if(Array.isArray(val) && key){
-      return html`<td ${attrs}>${tablify(val, key, 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json', false)}</td>`;
+      return html`<td ${attrs}>${descriptionTitle}${tablify(val, key, 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json', false)}</td>`;
     }else{
-      return html`<td ${attrs} data-is-json><span>⚙️</span></td>`;
+      return html`<td ${attrs} data-is-json>
+        <details>
+          <summary></summary>
+          ${JSON.stringify(val, null, 2)}
+        </details>
+      </td>`;
     }
     
   }else{
