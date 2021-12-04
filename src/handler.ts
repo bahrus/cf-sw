@@ -1,5 +1,6 @@
 import { Declaration, CustomElementDeclaration, CustomElement, Package, ClassDeclaration, ClassField, ClassMethod, Module } from '../node_modules/custom-elements-manifest/schema.d.js';
 import { substrBetween } from './substrBetween';
+import {html} from './html';
 declare const MY_KV: any;
 
 export interface EnhancedClassField extends ClassField{
@@ -236,19 +237,6 @@ function getKeys(obj: any[]){
   }
   return Object.keys(keyCounts).sort((a,b) => keyCounts[b] - keyCounts[a]);
 
-}
-
-function html(strings: TemplateStringsArray, ...keys: string[]) {
-  const out: string[]  = [];
-  for (let i = 0, ii = strings.length; i < ii; i++) {
-      out.push(strings[i]);
-      // if we have a variables for it, we need to bind it.
-      const ithKey = keys[i];
-      if (ithKey !== undefined) {
-        out.push(ithKey);
-      }
-    }
-  return out.join('');
 }
 
 function getTagNameToDeclaration(fetchResult: any){
