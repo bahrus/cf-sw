@@ -106,6 +106,12 @@ export async function handleRequest(request: Request): Promise<Response> {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="ts" content="${new Date().toISOString()}">
       <title>WC Info</title>
+      <style>
+        section{
+          content-visibility: auto;
+          contain-intrinsic-size: 0 500px;
+        }
+      </style>
       <link rel="preload" href="${stylesheet}" as="style" onload="this.onload=null;this.rel='stylesheet'">
       <noscript><link rel="stylesheet" href="${stylesheet}"></noscript>
     </head>
