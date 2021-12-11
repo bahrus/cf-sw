@@ -12,7 +12,7 @@ Demos:
 
 ## TODO's
 
-1.  Streaming
+1.  [Streaming](https://github.com/PierBover/cloudflare-workers-streams-example)
 
 
 
