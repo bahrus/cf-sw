@@ -106,12 +106,12 @@ export async function handleRequest(request: Request): Promise<Response> {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="ts" content="${new Date().toISOString()}">
       <title>WC Info</title>
-      <style>
+      <!-- <style>
         section{
           content-visibility: auto;
-          contain-intrinsic-size: 0 500px;
+          contain-intrinsic-size: 0 100px;
         }
-      </style>
+      </style> -->
       <link rel="preload" href="${stylesheet}" as="style" onload="this.onload=null;this.rel='stylesheet'">
       <noscript><link rel="stylesheet" href="${stylesheet}"></noscript>
     </head>
@@ -143,11 +143,18 @@ export async function handleRequest(request: Request): Promise<Response> {
         ${!(<any>declaration)?.members ? ''  : tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Method', mobile ,['kind'])}
       </section>
     `).join('')}
-    <xtal-editor read-only key=package>
-    <textarea slot=initVal>
-    ${JSON.stringify(json)}
-    </textarea>
-    </xtal-editor>
+    <hr>
+    <section>
+      <hgroup>
+        <h1>View Raw JSON</h1>
+      </hgroup>
+      <xtal-editor read-only key=package>
+      <textarea slot=initVal>
+      ${JSON.stringify(json)}
+      </textarea>
+      </xtal-editor>
+    </section>
+
     </main>
     <script type=module>
       import 'https://cdn.skypack.dev/xtal-editor';
