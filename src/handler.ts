@@ -106,14 +106,7 @@ export async function handleRequest(request: Request): Promise<Response> {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="ts" content="${new Date().toISOString()}">
       <title>WC Info</title>
-      <!-- <style>
-        section{
-          content-visibility: auto;
-          contain-intrinsic-size: 0 100px;
-        }
-      </style> -->
-      <link rel="preload" href="${stylesheet}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-      <noscript><link rel="stylesheet" href="${stylesheet}"></noscript>
+      <link rel="stylesheet" href="${stylesheet}">
     </head>
     <body>
     <header class="package-header" part="package-header" itemscope itemtype="https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Reference">
@@ -143,7 +136,7 @@ export async function handleRequest(request: Request): Promise<Response> {
         ${!(<any>declaration)?.members ? ''  : tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Method', mobile ,['kind'])}
       </section>
     `).join('')}
-    <hr>
+    <hr/>
     <section>
       <hgroup>
         <h1>View Raw JSON</h1>
