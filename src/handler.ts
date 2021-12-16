@@ -123,7 +123,8 @@ export async function handleRequest(request: Request): Promise<Response> {
       "${tocXSLT}": {
         "target": "xtal-side-nav",
         "whenDefined": [],
-        "mode": "append"
+        "mode": "append",
+        "cloneAndExpandTempl": true
       }
     }'>
     ${declarations.map((declaration, idx) => createDeclaration(declaration, idx, mobile)).join('')}
