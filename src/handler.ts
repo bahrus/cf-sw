@@ -165,7 +165,7 @@ function createDeclaration(declaration: Declaration, idx: number, mobile: boolea
     return createSection(declaration, mobile);
   }
   return html`
-      <template be-intersectional>
+      <template id="${(<any>declaration).tagName}" be-intersectional>
         ${createSection(declaration, mobile)}
       </template>
   `;
