@@ -107,6 +107,12 @@ export async function handleRequest(request: Request): Promise<Response> {
       <meta name="ts" content="${new Date().toISOString()}">
       <title>WC Info</title>
       <link rel="stylesheet" href="${stylesheet}">
+      <style>
+        template[be-intersectional], template[is-intersectional] {
+          height:  500px;
+          display: block;
+        }
+      </style>
     </head>
     <body>
     <header class="package-header" part="package-header" itemscope itemtype="https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Reference">
@@ -120,8 +126,53 @@ export async function handleRequest(request: Request): Promise<Response> {
         "mode": "append"
       }
     }'>
-    ${declarations.map(declaration => html`
-      <section itemscope id="${(<any>declaration).tagName}">
+    ${declarations.map((declaration, idx) => createDeclaration(declaration, idx, mobile)).join('')}
+    <template be-intersectional>
+      <hr/>
+      <section>
+        <hgroup>
+          <h1>View Raw JSON</h1>
+        </hgroup>
+        <xtal-editor read-only key=package>
+        <textarea slot=initVal>
+        ${JSON.stringify(json)}
+        </textarea>
+        </xtal-editor>
+      </section>
+      <script type=module>
+        import('https://cdn.skypack.dev/xtal-editor');
+      </script>
+    </template>
+    </main>
+
+    <script type=module>
+      import('https://cdn.skypack.dev/be-intersectional');
+      import('https://cdn.skypack.dev/xtal-side-nav');
+      import('https://cdn.skypack.dev/be-metamorphic');
+    </script>
+    </body>
+    </html>
+  `, {
+    headers
+  })
+  }
+  
+}
+
+function createDeclaration(declaration: Declaration, idx: number, mobile: boolean){
+  if(idx < 3){
+    return createSection(declaration, mobile);
+  }
+  return html`
+      <template be-intersectional>
+        ${createSection(declaration, mobile)}
+      </template>
+  `;
+}
+
+function createSection(declaration: Declaration, mobile: boolean){
+  return html`
+    <section itemscope id="${(<any>declaration).tagName}">
         <hgroup>
           <h1 itemprop="tagName" >${(<any>declaration).tagName}</h1>
           <h2 itemprop="description">${declaration.description || ''}</h2>
@@ -134,37 +185,9 @@ export async function handleRequest(request: Request): Promise<Response> {
         ${tablify((<any>declaration).slots, 'Slots', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Slot', false)}
         ${tablify((<any>declaration).events, 'Events', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Event', false)}
         ${!(<any>declaration)?.members ? ''  : tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Method', mobile ,['kind'])}
-      </section>
-    `).join('')}
-    <hr/>
-    <section>
-      <hgroup>
-        <h1>View Raw JSON</h1>
-      </hgroup>
-      <xtal-editor read-only key=package>
-      <textarea slot=initVal>
-      ${JSON.stringify(json)}
-      </textarea>
-      </xtal-editor>
     </section>
-
-    </main>
-    <script type=module>
-      import 'https://cdn.skypack.dev/xtal-editor';
-    </script>
-    <script type=module>
-      import 'https://cdn.skypack.dev/xtal-side-nav';
-      import 'https://cdn.skypack.dev/be-metamorphic';
-    </script>
-    </body>
-    </html>
-  `, {
-    headers
-  })
-  }
-  
+  `;
 }
-
 
 
 function tablify(obj: any[], name: string, itemType: string, separateLineForDescription: boolean, exclude: string[] = []): string{
