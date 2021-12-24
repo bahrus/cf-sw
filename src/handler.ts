@@ -1,7 +1,6 @@
 import { Declaration, CustomElementDeclaration, CustomElement, Package, ClassDeclaration, ClassField, ClassMethod, Module } from '../node_modules/custom-elements-manifest/schema.d.js';
-import { substrBetween } from './substrBetween';
 //import {html} from './html';
-import {html} from 'may-it-be/index.mjs';
+import {html, substrBetween} from 'may-it-be/index.js';
 declare const MY_KV: any;
 
 export interface EnhancedClassField extends ClassField{
