@@ -1,0 +1,1 @@
+declare module 'may-it-be/index.mjs';
