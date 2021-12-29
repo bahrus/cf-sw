@@ -36,9 +36,9 @@ export async function handleRequest(request: Request): Promise<Response> {
       <h1>WC Info Usage</h1>
       <form style="display:flex;flex-direction:column">
         <label for="href">href</label>
-        <input type="text" id="href" size=100 name="href" value="https://cdn.skypack.dev/@shoelace-style/shoelace/dist/custom-elements.json">
+        <input type="text" id="href" size=100 name="href" value="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace/dist/custom-elements.json">
         <label for="stylesheet">stylesheet</label>
-        <input type="text" id="stylesheet" size=100 name="stylesheet" value="https://unpkg.com/wc-info/simple-ce-style.css">
+        <input type="text" id="stylesheet" size=100 name="stylesheet" value="https://cdn.jsdelivr.net/npm/wc-info/simple-ce-style.css">
         <label for="embedded">embedded</label>
         <input type="text" id="embedded" name="embedded" value="false">
         <label for="tags">tags</label>
@@ -46,7 +46,7 @@ export async function handleRequest(request: Request): Promise<Response> {
         <label for="ts">Timestamp</label>
         <input type="text" id="ts" name="ts" value="${new Date().toISOString()}">
         <label for="tocXSLT">tocXSLT</label>
-        <input type="text" id="tocXSLT" name="tocXSLT" value="https://unpkg.com/wc-info/toc.xsl">
+        <input type="text" id="tocXSLT" name="tocXSLT" value="https://cdn.jsdelivr.net/npm/wc-info/toc.xsl">
         <button type="submit">Submit</button>
       </form>
     </body>
@@ -78,24 +78,24 @@ export async function handleRequest(request: Request): Promise<Response> {
     declarations = declarations.filter(d => tags.split(',').includes((<any>d).tagName));
   }
   const embedded = substrBetween(url, 'embedded=', '&');
-  const stylesheet = unescape(substrBetween(url, 'stylesheet=', '&')) || 'https://unpkg.com/wc-info/simple-ce-style.css';
+  const stylesheet = unescape(substrBetween(url, 'stylesheet=', '&')) || 'https://cdn.jsdelivr.net/npm/wc-info/simple-ce-style.css';
   if(embedded === 'true'){
     return new Response(html`
         ${declarations.map(declaration => html`
           <h1 id="${(<any>declaration).tagName}">${(<any>declaration).tagName}</h1>
-          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField', mobile, ['kind'])}
-          ${tablify((<any>declaration).attributes, 'Attributes', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Attribute', mobile)}
-          ${tablify((<any>declaration).cssProperties, 'CSS Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/CssCustomProperty', false)}
-          ${tablify((<any>declaration).cssParts, 'CSS Parts', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/CssPart', false)}
-          ${tablify((<any>declaration).slots, 'Slots', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Slot', false)}
-          ${tablify((<any>declaration).events, 'Events', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Event', false)}
-          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Method', mobile, ['kind'])}
+          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField', mobile, ['kind'])}
+          ${tablify((<any>declaration).attributes, 'Attributes', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/Attribute', mobile)}
+          ${tablify((<any>declaration).cssProperties, 'CSS Properties', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/CssCustomProperty', false)}
+          ${tablify((<any>declaration).cssParts, 'CSS Parts', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/CssPart', false)}
+          ${tablify((<any>declaration).slots, 'Slots', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/Slot', false)}
+          ${tablify((<any>declaration).events, 'Events', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/Event', false)}
+          ${tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/Method', mobile, ['kind'])}
       `).join('')}
     `, {
     headers
   });
   }else{
-    const tocXSLT = unescape(substrBetween(url, 'tocXSLT=', '&')) || 'https://unpkg.com/wc-info/toc.xsl';
+    const tocXSLT = unescape(substrBetween(url, 'tocXSLT=', '&')) || 'https://cdn.jsdelivr.net/npm/wc-info/toc.xsl';
     console.log('generating response');
     return new Response(html`
     <!DOCTYPE html>
@@ -115,7 +115,7 @@ export async function handleRequest(request: Request): Promise<Response> {
       </style>
     </head>
     <body>
-    <header class="package-header" part="package-header" itemscope itemtype="https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Reference">
+    <header class="package-header" part="package-header" itemscope itemtype="https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/Reference">
       <xtal-side-nav></xtal-side-nav>
       <h1 itemprop="name" class="package" part="package-title">${(<any>json?.package)?.name}</h1>
     </header>
@@ -141,15 +141,15 @@ export async function handleRequest(request: Request): Promise<Response> {
         </xtal-editor>
       </section>
       <script type=module>
-        import('https://cdn.skypack.dev/xtal-editor');
+        import('https://esm.run/xtal-editor');
       </script>
     </template>
     </main>
 
     <script type=module>
-      import('https://cdn.skypack.dev/be-intersectional');
-      import('https://cdn.skypack.dev/xtal-side-nav');
-      import('https://cdn.skypack.dev/be-metamorphic');
+      import('https://esm.run/be-intersectional');
+      import('https://esm.run/xtal-side-nav');
+      import('https://esm.run/be-metamorphic');
     </script>
     </body>
     </html>
@@ -179,13 +179,13 @@ function createSection(declaration: Declaration, mobile: boolean){
           <h2 itemprop="description">${declaration.description || ''}</h2>
           <h3 itemprop="summary">${declaration.summary || ''}</h3>
         </hgroup>
-        ${!(<any>declaration)?.members ? ''  : tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField', mobile, ['kind'])}
-        ${tablify((<any>declaration).attributes, 'Attributes', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Attribute', mobile)}
-        ${tablify((<any>declaration).cssProperties, 'CSS Properties', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/CssCustomProperty', false)}
-        ${tablify((<any>declaration).cssParts, 'CSS Parts', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/CssPart', false)}
-        ${tablify((<any>declaration).slots, 'Slots', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Slot', false)}
-        ${tablify((<any>declaration).events, 'Events', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Event', false)}
-        ${!(<any>declaration)?.members ? ''  : tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json#definitions/Method', mobile ,['kind'])}
+        ${!(<any>declaration)?.members ? ''  : tablify((<any>declaration).members.filter((x: any) => (x.kind === 'field') && (x.privacy !== 'private')) , 'Properties', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/ClassField', mobile, ['kind'])}
+        ${tablify((<any>declaration).attributes, 'Attributes', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/Attribute', mobile)}
+        ${tablify((<any>declaration).cssProperties, 'CSS Properties', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/CssCustomProperty', false)}
+        ${tablify((<any>declaration).cssParts, 'CSS Parts', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/CssPart', false)}
+        ${tablify((<any>declaration).slots, 'Slots', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/Slot', false)}
+        ${tablify((<any>declaration).events, 'Events', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/Event', false)}
+        ${!(<any>declaration)?.members ? ''  : tablify((<any>declaration).members.filter((x: any) => (x.kind === 'method') && (x.privacy !== 'private')) , 'Methods', 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/Method', mobile ,['kind'])}
     </section>
   `;
 }
@@ -239,7 +239,7 @@ function displayCell(key: string, x: any, compactedName: string, colspan = ''){
   if(val === undefined) return html`<td ${attrs}> - </td>`;
   if(typeof(val) === 'object'){
     if(Array.isArray(val) && key){
-      return html`<td ${attrs}>${tablify(val, key, 'https://unpkg.com/custom-elements-manifest@1.0.0/schema.json', false)}</td>`;
+      return html`<td ${attrs}>${tablify(val, key, 'https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json', false)}</td>`;
     }else{
       return html`<td ${attrs} data-is-json>
         <details>
