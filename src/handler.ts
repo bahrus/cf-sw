@@ -11,7 +11,23 @@ const headers =  {
   'Access-Control-Allow-Origin': '*',
 };
 
+class BeDefinitiveAttribHandler {
+  element(element: Element) {
+    console.log(element.tagName)
+  }
+}
+
 export async function handleRequest(request: Request): Promise<Response> {
+
+  const res = await fetch('https://cdn.jsdelivr.net/npm/xtal-side-nav/xtal-side-nav.html');
+
+  const rewriter = new HTMLRewriter()
+  .on("[be-definitive]", new BeDefinitiveAttribHandler());
+  const test = await rewriter.transform(res);
+  const test2 = await test.text();
+  console.log(test2);
+
+
   const mobile = request.headers.get('Sec-ch-ua-mobile') === '?1';
   console.log('mobile = ' + mobile);
   const url = request.url;
