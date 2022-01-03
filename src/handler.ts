@@ -13,7 +13,10 @@ const headers =  {
 
 class BeDefinitiveAttribHandler {
   element(element: Element) {
-    console.log(element.tagName)
+    console.log(element.tagName);
+    element.setInnerContent(html`
+    "<a-b-c>hello</a-b-c>"
+    `, {html: true});
   }
 }
 
