@@ -11,24 +11,11 @@ const headers =  {
   'Access-Control-Allow-Origin': '*',
 };
 
-class BeDefinitiveAttribHandler {
-  element(element: Element) {
-    console.log(element.tagName);
-    element.setInnerContent(html`
-    "<a-b-c>hello</a-b-c>"
-    `, {html: true});
-  }
-}
+
 
 export async function handleRequest(request: Request): Promise<Response> {
 
   const res = await fetch('https://cdn.jsdelivr.net/npm/xtal-side-nav/xtal-side-nav.html');
-
-  const rewriter = new HTMLRewriter()
-  .on("[be-definitive]", new BeDefinitiveAttribHandler());
-  const test = await rewriter.transform(res);
-  const test2 = await test.text();
-  console.log(test2);
 
 
   const mobile = request.headers.get('Sec-ch-ua-mobile') === '?1';
@@ -45,11 +32,7 @@ export async function handleRequest(request: Request): Promise<Response> {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="ts" content="${new Date().toISOString()}">
       <title>WC Info Usage</title>
-      <!-- Compiled and minified CSS -->
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
-      <!-- Compiled and minified JavaScript -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+      <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
     </head>
     <body>
       <h1>WC Info Usage</h1>
