@@ -143,7 +143,7 @@ export async function handleRequest(request: Request): Promise<Response> {
         </xtal-editor>
       </section>
       <script type=module>
-        import('https://esm.run/xtal-editor@0.0.136');
+        import('https://esm.run/xtal-editor@0.0.138');
       </script>
     </template>
     </main>
