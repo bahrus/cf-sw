@@ -110,7 +110,7 @@ export async function handleRequest(request: Request): Promise<Response> {
       <title>WC Info</title>
       <link rel="stylesheet" href="${stylesheet}">
       <style>
-        template[be-intersectional], template[is-intersectional] {
+        template[be-lazy], template[is-lazy] {
           height:  500px;
           display: block;
         }
@@ -130,7 +130,7 @@ export async function handleRequest(request: Request): Promise<Response> {
       }
     }'>
     ${declarations.map((declaration, idx) => createDeclaration(declaration, idx, mobile)).join('')}
-    <template be-intersectional>
+    <template be-lazy>
       <hr/>
       <section>
         <hgroup>
@@ -149,7 +149,7 @@ export async function handleRequest(request: Request): Promise<Response> {
     </main>
 
     <script type=module>
-      import('https://esm.run/be-intersectional@0.0.15');
+      import('https://esm.run/be-lazy@0.0.2');
       import('https://esm.run/xtal-side-nav@0.0.63');
       import('https://esm.run/be-metamorphic@0.0.16');
     </script>
@@ -167,7 +167,7 @@ function createDeclaration(declaration: Declaration, idx: number, mobile: boolea
     return createSection(declaration, mobile);
   }
   return html`
-      <template id="${(<any>declaration).tagName}" be-intersectional>
+      <template id="${(<any>declaration).tagName}" be-lazy>
         ${createSection(declaration, mobile)}
       </template>
   `;
