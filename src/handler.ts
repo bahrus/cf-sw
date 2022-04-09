@@ -143,15 +143,15 @@ export async function handleRequest(request: Request): Promise<Response> {
         </xtal-editor>
       </section>
       <script type=module>
-        import('https://esm.run/xtal-editor@0.0.144');
+        import('https://esm.run/xtal-editor@0.0.147');
       </script>
     </template>
     </main>
 
     <script type=module>
-      import('https://esm.run/be-lazy@0.0.3');
-      import('https://esm.run/xtal-side-nav@0.0.71');
-      import('https://esm.run/be-metamorphic@0.0.21');
+      import('https://esm.run/be-lazy@0.0.4');
+      import('https://esm.run/xtal-side-nav@0.0.72');
+      import('https://esm.run/be-metamorphic@0.0.22');
     </script>
     </body>
     </html>
