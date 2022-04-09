@@ -151,7 +151,7 @@ export async function handleRequest(request: Request): Promise<Response> {
     <script type=module>
       import('https://esm.run/be-lazy@0.0.4');
       import('https://esm.run/xtal-side-nav@0.0.72');
-      import('https://esm.run/be-metamorphic@0.0.22');
+      import('https://esm.run/be-metamorphic@0.0.23');
     </script>
     </body>
     </html>
