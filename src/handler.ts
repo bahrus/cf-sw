@@ -156,15 +156,15 @@ export async function handleRequest(request: Request): Promise<Response> {
       </section>
       <script type=module>
         import('https://esm.run/be-kibitzing@0.0.1');
-        import('https://esm.run/xtal-editor@0.0.150');
+        import('https://esm.run/xtal-editor@0.0.153');
       </script>
     </template>
     </main>
 
     <script type=module>
-      import('https://esm.run/be-lazy@0.0.4');
-      import('https://esm.run/xtal-side-nav@0.0.79');
-      import('https://esm.run/be-metamorphic@0.0.23');
+      import('https://esm.run/be-lazy@0.0.5');
+      import('https://esm.run/xtal-side-nav@0.0.81');
+      import('https://esm.run/be-metamorphic@0.0.24');
     </script>
     </body>
     </html>
