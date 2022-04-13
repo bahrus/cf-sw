@@ -137,8 +137,8 @@ export async function handleRequest(request: Request): Promise<Response> {
           <h1>View Raw JSON</h1>
         </hgroup>
         
-        <xtal-editor read-only key=package>
-        <textarea slot=initVal>
+        <xtal-editor read-only style=height:600px;>
+        <textarea slot=init-val>
         ${JSON.stringify(json)}
         </textarea>
         </xtal-editor>
@@ -155,15 +155,15 @@ export async function handleRequest(request: Request): Promise<Response> {
         </template>
       </section>
       <script type=module>
-        import('https://esm.run/be-kibitzing@0.0.1');
-        import('https://esm.run/xtal-editor@0.0.153');
+        import('https://esm.run/be-kibitzing@0.0.2');
+        import('https://esm.run/xtal-editor@0.0.161');
       </script>
     </template>
     </main>
 
     <script type=module>
-      import('https://esm.run/be-lazy@0.0.5');
-      import('https://esm.run/xtal-side-nav@0.0.81');
+      import('https://esm.run/be-lazy@0.0.6');
+      import('https://esm.run/xtal-side-nav@0.0.82');
       import('https://esm.run/be-metamorphic@0.0.24');
     </script>
     </body>
