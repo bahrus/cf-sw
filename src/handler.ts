@@ -33,7 +33,7 @@ export async function handleRequest(request: Request): Promise<Response> {
         @import "https://unpkg.com/open-props@1.3.16";
         @import "https://unpkg.com/open-props@1.3.16/normalize.min.css";
         label {
-          height: 36px;
+          height: 45px;
           display: flex;
           flex-direction: row;
           align-items: center;
