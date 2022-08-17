@@ -188,16 +188,16 @@ export async function handleRequest(request: Request): Promise<Response> {
         </template>
       </section>
       <script type=module>
-        import('https://esm.run/be-kibitzing@0.0.2');
-        import('https://esm.run/xtal-editor@0.0.161');
+        import('https://esm.run/be-kibitzing@0.0.3');
+        import('https://esm.run/xtal-editor@0.0.177');
       </script>
     </template>
     </main>
 
     <script type=module>
-      import('https://esm.run/be-lazy@0.0.6');
-      import('https://esm.run/xtal-side-nav@0.0.82');
-      import('https://esm.run/be-metamorphic@0.0.24');
+      import('https://esm.run/be-lazy@0.0.13');
+      import('https://esm.run/xtal-side-nav@0.0.87');
+      import('https://esm.run/be-metamorphic@0.0.26');
     </script>
     </body>
     </html>
