@@ -151,7 +151,11 @@ export async function handleRequest(request: Request): Promise<Response> {
     </head>
     <body>
     <header class="package-header" part="package-header" itemscope itemtype="https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/Reference">
-      <xtal-side-nav></xtal-side-nav>
+      <xtal-side-nav be-restated='{
+        "from": "main",
+        "xslt": "${tocXSLT}",
+        "expandTempl": true
+      }'></xtal-side-nav>
       <h1 itemprop="name" class="package" part="package-title">${(<any>json?.package)?.name}</h1>
     </header>
     <main be-metamorphic='{
@@ -192,12 +196,15 @@ export async function handleRequest(request: Request): Promise<Response> {
         import('https://esm.run/xtal-editor@0.0.177');
       </script>
     </template>
+    <template be-a-beacon></template>
     </main>
 
     <script type=module>
       import('https://esm.run/be-lazy@0.0.13');
       import('https://esm.run/xtal-side-nav@0.0.87');
-      import('https://esm.run/be-metamorphic@0.0.26');
+      import('https://esm.run/be-restated@0.0.1');
+      import('https://esm.run/be-a-beacon@0.0.1');
+      //import('https://esm.run/be-metamorphic@0.0.26');
     </script>
     </body>
     </html>
