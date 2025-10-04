@@ -74,10 +74,10 @@ export async function handleRequest(request: Request): Promise<Response> {
             <input type="text" id="ts" name="ts" value="${new Date().toISOString()}">
           </label>
           
-          <label for="tocXSLT">
+          <!--<label for="tocXSLT">
             tocXSLT
             <input type="text" id="tocXSLT" name="tocXSLT" value="https://cdn.jsdelivr.net/npm/wc-info/toc.xsl">
-          </label>
+          </label>-->
         </fieldset>
           <button type="submit">Submit</button>
        
@@ -130,7 +130,7 @@ export async function handleRequest(request: Request): Promise<Response> {
     headers
   });
   }else{
-    const tocXSLT = unescape(substrBetween(url, 'tocXSLT=', '&')) || 'https://cdn.jsdelivr.net/npm/wc-info/toc.xsl';
+    //const tocXSLT = unescape(substrBetween(url, 'tocXSLT=', '&')) || 'https://cdn.jsdelivr.net/npm/wc-info/toc.xsl';
     console.log('generating response');
     return new Response(html`
     <!DOCTYPE html>
@@ -151,61 +151,14 @@ export async function handleRequest(request: Request): Promise<Response> {
     </head>
     <body>
     <header class="package-header" part="package-header" itemscope itemtype="https://cdn.jsdelivr.net/npm/custom-elements-manifest@1.0.0/schema.json#definitions/Reference">
-      <xtal-side-nav be-restated='{
-        "from": "main",
-        "xslt": "${tocXSLT}",
-        "expandTempl": true
-      }'></xtal-side-nav>
       <h1 itemprop="name" class="package" part="package-title">${(<any>json?.package)?.name}</h1>
     </header>
-    <main be-metamorphic='{
-      "${tocXSLT}": {
-        "target": "xtal-side-nav",
-        "whenDefined": [],
-        "mode": "append",
-        "cloneAndExpandTempl": true
-      }
-    }'>
+    <main>
     ${declarations.map((declaration, idx) => createDeclaration(declaration, idx, mobile)).join('')}
-    <template be-lazy>
-      <hr/>
-      <section>
-        <hgroup>
-          <h1>View Raw JSON</h1>
-        </hgroup>
-        
-        <xtal-editor read-only style=height:600px;>
-        <textarea slot=init-val>
-        ${JSON.stringify(json)}
-        </textarea>
-        </xtal-editor>
-        <template be-kibitzing='{
-          "selectorSequence": ["xtal-editor", "xtal-side-nav"]
-        }'>
-          <style>
-            aside.side-nav{
-              position: absolute;
-            }
-          </style>
-        </template>
 
-        </template>
-      </section>
-      <script type=module>
-        import('https://esm.run/be-kibitzing@0.0.3');
-        import('https://esm.run/xtal-editor@0.0.177');
-      </script>
-    </template>
-    <template be-a-beacon></template>
     </main>
 
-    <script type=module>
-      import('https://esm.run/be-lazy@0.0.13');
-      import('https://esm.run/xtal-side-nav@0.0.87');
-      import('https://esm.run/be-restated@0.0.1');
-      import('https://esm.run/be-a-beacon@0.0.1');
-      //import('https://esm.run/be-metamorphic@0.0.26');
-    </script>
+
     </body>
     </html>
   `, {
